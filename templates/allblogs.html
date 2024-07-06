@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.5/pagination.css"
+    />
+    <link href="styles.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.snow.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.5/pagination.min.js"></script>
+    <style>
+      .blogs {
+        display: flex;
+        width: 50%;
+        flex-direction: column;
+      }
+      .paginationjs-content {
+        width: 100%;
+      }
+      .middle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .blogs .paginationjs {
+        display: flex;
+        justify-content: center;
+        margin: 10px;
+      }
+      .topicContent {
+        max-width: 100px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .search {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+      }
+      .search input {
+        margin: 10px;
+        width: 300px;
+      }
+      /* tags section */
+      .company-tags {
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        right: 10px;
+        top: 20%;
+      }
+      .tags {
+        width: 200px;
+        height: 350px;
+        border: 1px solid black;
+      }
+      .search-tags {
+        margin: 10px;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+      }
+      #suggestions {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        max-height: 200px;
+        overflow-y: auto;
+        width: auto;
+        z-index: 1;
+      }
+      .suggestion {
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .suggestion:hover {
+        background-color: #f0f0f0;
+      }
+      .selected {
+        background-color: #f0f0f0;
+      }
+      .tags {
+        overflow: auto;
+        scroll-behavior: smooth;
+      }
+      .display {
+        /* display: grid;
+    set the no. of max columns as 2
+    grid-template-columns: auto;
+    grid-template-rows: auto; */
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .tag {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 5px;
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background-color: #eee;
+      }
+      .tagHover {
+        display: block;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.8);
+        max-height: 200px;
+        overflow-y: auto;
+        width: auto;
+        margin-bottom: 70px;
+        z-index: -1;
+        color: white;
+        padding: 5px;
+        opacity: 0;
+      }
+      .show {
+        animation: fadeIn 0.3s forwards;
+      }
+      .hide {
+        animation: fadeOut 0.3s forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          z-index: -1;
+        }
+        to {
+          opacity: 1;
+          z-index: 1;
+        }
+      }
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+          z-index: 1;
+        }
+        to {
+          opacity: 0;
+          z-index: -1;
+        }
+      }
+      .tagText {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 240px;
+      }
+      .tag .tagText {
+        margin-right: 10px;
+      }
+      .tag .close {
+        cursor: pointer;
+        display: inline-block;
+        /* Adjust margin-left to position close button correctly */
+        margin-left: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/landing">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="d-inline-block align-top"
+            alt=""
+            height="30"
+            loading="lazy"
+          />
+          <!-- Bootstrap -->
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/landing">All Questions</a>
+            </li>
+            <!-- <li class="nav-item">
+                        <a class="nav-link" href="/newblog">New Blog</a>
+                    </li> -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Blogs
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/allblogs">All Blogs</a>
+                <a class="dropdown-item" href="/userblogs">My Blogs</a>
+                <a class="dropdown-item" href="/savedblogs">Saved Blogs</a>
+                <a class="dropdown-item" href="/newblog">New Blog</a>
+              </div>
+            </li>
+            <!-- My Questions Dropdown -->
+            <!-- <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                My Questions
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/accepted">Accepted</a>
+                <a class="dropdown-item" href="/rejected">Rejected</a>
+                <a class="dropdown-item" href="/saved">Saved</a>
+                <a class="dropdown-item" href="/new">New Question</a>
+              </div>
+            </li> -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Jobs
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/all-jobs">Jobs</a>
+                <a class="dropdown-item" href="/add-job">Add Job</a>
+              </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- create a search input and search button clicking on which the blogs are filtered and displayed -->
+    <div class="search">
+      <input
+        type="text"
+        id="search"
+        class="form-control"
+        placeholder="Search Blogs"
+      />
+      <button id="searchBtn" class="btn btn-primary">Search</button>
+    </div>
+
+    <!-- Use pagination and tables to display the id, topic with link to the id -->
+    <div class="middle">
+      <div class="blogs">
+        <div id="pagination" class="paginationjs"></div>
+        <!-- <div id="dataContainer" class="paginationjs-content"> -->
+        <!-- add a table header with blog id, topic -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Blog ID</th>
+              <th scope="col">Topic</th>
+            </tr>
+          </thead>
+          <tbody id="dataContainer" class="paginationjs-content"></tbody>
+        </table>
+        <!-- </div> -->
+      </div>
+    </div>
+    <div class="company-tags">
+      <h3>Tags</h3>
+      <!-- add a search bar to search through the available company tags -->
+      <div class="tags">
+        <div class="display"></div>
+      </div>
+      <div class="search-tags">
+        <div class="search-bar">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search for tags..."
+          />
+          <div id="suggestions"></div>
+        </div>
+        <button id="addTagButton">Add Tag</button>
+      </div>
+      <p id="error"></p>
+    </div>
+    <div class="topic-tags"></div>
+    <script>
+            const allBlogs = {{ allblogs | safe }};
+            for (let i = 0; i < allBlogs.length; i++) {
+              allBlogs[i].tags = allBlogs[i].tags.split(",");
+            }
+            // const tags = {{ tags | safe }};
+            const itemsPerPage = 5;
+
+            function DisplayData(allBlogs) {
+              var data = [];
+              var ind = 1;
+              for (var blog in allBlogs) {
+                  console.log(blog);
+                data.push(
+                  `
+                      <tr>
+                          <td scope="row">${ind}</td>
+                          <td class="topicContent"><a href="/displayblogs/${allBlogs[blog].id}">${allBlogs[blog].topic}</a></td>
+                      </tr>
+                  `
+                );
+                ind++;
+              }
+              renderTable(data);
+            }
+              DisplayData(allBlogs);
+              function renderTable(data) {
+                  //clear the pagination container
+                  console.log(1);
+                  console.log(data);
+                      $(document).ready(function () {
+                          $("#pagination").pagination({
+                              dataSource: data,
+                              pageSize: itemsPerPage,
+                              callback: function (data, pagination) {
+                              const container = $("#dataContainer");
+                              container.empty();
+
+                              $.each(data, function (index, item) {
+                                  console.log(item);
+                                  container.append(item);
+                              });
+                              },
+                          });
+                          });
+                  }
+              // search button click event don't use jquery
+              document.getElementById("searchBtn").addEventListener("click", function () {
+                  const search = document.getElementById("search").value;
+                  const filteredBlogs = allBlogs.filter((blog) => blog.topic.includes(search));
+                  DisplayData(filteredBlogs);
+              });
+              // on enter key press in search input, trigger the search button click event
+              document.getElementById("search").addEventListener("keypress", function (e) {
+                  if (e.key === "Enter") {
+                  document.getElementById("searchBtn").click();
+                  }
+              });
+              var tags = [];
+        fetch("/getalltags")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            let tag = data.tags;
+            let display = document.querySelector(".display");
+            tags = tag;
+          });
+        console.log(tags);
+      const error = document.getElementById("error");
+        function search() {
+          const searchInput = document.getElementById("searchInput");
+          const suggestions = document.getElementById("suggestions");
+          const query = searchInput.value.toLowerCase();
+          suggestions.innerHTML = "";
+          if(query === "") {
+            suggestions.style.display = "none";
+            selectedIndex = -1;
+              return;
+          }
+          const filteredElements = tags.filter((element) =>
+            element.toLowerCase().startsWith(query)
+          );
+          // reset the scroll bar of the suggestions box
+          // Display filtered suggestions
+          filteredElements.forEach((element, index) => {
+            const div = document.createElement("div");
+            div.textContent = element;
+            div.classList.add("suggestion");
+            if (index === selectedIndex) {
+              div.classList.add("selected");
+            }
+            div.addEventListener("click", () => {
+              // When suggestion is clicked, fill search input with suggestion
+              searchInput.value = element;
+              selectedIndex = -1;
+              suggestions.style.display = "none"; // Hide suggestions
+            });
+            suggestions.appendChild(div);
+          });
+          // Show suggestions if there are any, otherwise hide
+          suggestions.style.display = filteredElements.length ? "block" : "none";
+          suggestions.scrollTop = 0;
+        }
+
+        // Perform search on input change whevever user clicks on the search input
+
+
+        // document.getElementById("searchInput").addEventListener("input", search);
+
+        // Perform search on input change whevever user clicks on the search input before even the user starts to type
+        document.getElementById("searchInput").addEventListener("focus", search);
+        document.getElementById("searchInput").addEventListener("input", search);
+        document.getElementById("searchInput").addEventListener('keypress', function (e) {
+          if (e.key === 'Enter') {
+            addTag();
+          }
+        });
+        document.getElementById("addTagButton").addEventListener("click", addTag);
+        // document.getElementById("searchInput").addEventListener("input", search);
+
+        // Hide suggestions when search input loses focus, but not if suggestions box is hovered over
+        document.getElementById("searchInput").addEventListener("blur", () => {
+          if (!document.getElementById("suggestions").matches(":hover")) {
+            selectedIndex = -1;
+            document.getElementById("suggestions").style.display = "none";
+          }
+        });
+
+        //Keep suggestions box displayed as long as it's being hovered over
+        // document.getElementById("suggestions").addEventListener("mouseenter", () => {
+        //   document.getElementById("suggestions").style.display = "block";
+        // });
+
+        // // Hide suggestions box when mouse leaves it
+        // document.getElementById("suggestions").addEventListener("mouseleave", () => {
+        //   document.getElementById("suggestions").style.display = "none";
+        // });
+
+        // Handle keyboard navigation
+        let selectedIndex = -1; // Index of the currently selected suggestion
+        document.getElementById("searchInput").addEventListener("keydown", (event) => {
+          const suggestions = document.querySelectorAll(".suggestion");
+          if (event.key === "ArrowDown") {
+            selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
+            updateSelectedSuggestion(suggestions);
+            if(selectedIndex >= 0){
+              suggestions[selectedIndex].scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+            }
+          } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            //move the scroll bar of the suggestions box
+            if(selectedIndex >= 0){
+              suggestions[selectedIndex].scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+            }
+            updateSelectedSuggestion(suggestions);
+          } else if (event.key === "Enter") {
+            if (selectedIndex !== -1) {
+              document.getElementById("searchInput").value = suggestions[selectedIndex].textContent;
+              suggestions[selectedIndex].click();
+            }
+          } else if (event.key === "Escape") {
+            suggestions.style.display = "none";
+          }
+        });
+
+        // Function to update the selected suggestion and apply visual changes
+        function updateSelectedSuggestion(suggestions) {
+          suggestions.forEach((suggestion, index) => {
+            if (index === selectedIndex) {
+              suggestion.classList.add("selected");
+            } else {
+              suggestion.classList.remove("selected");
+            }
+          });
+        }
+        const displayElement = document.querySelector(".display");
+        function addTag(){
+          const tagText = document.getElementById("searchInput").value.trim();
+          if (tagText) {
+              // get the text contents of all the tags
+              let tagTexts = Array.from(displayElement.children).map(tag => tag.querySelector(".tagText").textContent);
+              console.log(tagTexts);
+              if(tagTexts.includes(tagText)){
+                  error.innerHTML = "Tag already exists";
+                  // wait for 2 seconds and then remove the error message
+                  setTimeout(() => {
+                      error.innerHTML = "";
+                  }, 1500);
+                  document.getElementById("searchInput").value = "";
+                  return;
+              }
+              error.innerHTML = "";
+            const tag = createTag(tagText);
+            displayElement.insertBefore(tag, displayElement.firstChild);
+            document.getElementById("searchInput").value = ""; // Clear input after adding tag
+            // filter the blogs based on the tags in the blogs array which has the tags as its 3rd parameter
+            // const filteredBlogs = allBlogs.filter((blog) => blog.tags.includes(tagText));
+            // get the current tags in the displayElement and filter the blogs based on the tags
+            const selectedTags = document.querySelectorAll(".tag");
+            const selectedTagsArray = Array.from(selectedTags);
+            // const selectedTagsText = selectedTagsArray.map(tag => tag.querySelector(".tagText").textContent);
+            // console.log(selectedTagsText);
+            // convert allBlogs.tags into a array
+            const filteredBlogs = [];
+            // console.log(allBlogs[0].tags);
+            for(let i = 0; i < allBlogs.length; i++){
+              let cnt = 0;
+              for(let j = 0; j < allBlogs[i].tags.length; j++){
+                for(let k = 0; k < selectedTagsArray.length; k++){
+                  curr = allBlogs[i].tags[j];
+                  curr = curr.trim()
+                  // trim from both the sides
+                  if(curr === selectedTagsArray[k].querySelector(".tagText").textContent.trim()){
+                    cnt++;
+                    break;
+                  }
+                }
+              }
+              if(cnt >= selectedTagsArray.length){
+                filteredBlogs.push(allBlogs[i]);
+              }
+            }
+            console.log(filteredBlogs);
+            DisplayData(filteredBlogs);
+          }
+        }
+
+        function createTag(text) {
+          const tagElement = document.createElement("div");
+          tagElement.classList.add("tag");
+          const textElement = document.createElement("span");
+          textElement.classList.add("tagText");
+          textElement.textContent = text;
+          const closeButton = document.createElement("span");
+          closeButton.classList.add("close");
+          closeButton.textContent = "×"; // Close button symbol
+          tagElement.appendChild(textElement);
+          tagElement.appendChild(closeButton);
+          // add a div to display the complete text of the tag on hover
+          const tagHover = document.createElement("div");
+          tagHover.classList.add("tagHover");
+          tagHover.textContent = text;
+          // const tagHoverText = document.createElement("span");
+          // tagHoverText.textContent = text;
+          // tagHover.appendChild(tagHoverText);
+          // tagHover.textContent = text;
+          tagElement.appendChild(tagHover);
+
+          textElement.addEventListener("mouseover", () => {
+            // tagHover.style.display = "block";
+            tagHover.classList.remove("hide");
+            tagHover.classList.add("show");
+          });
+          textElement.addEventListener("mouseout", () => {
+            tagHover.classList.remove("show");
+            tagHover.classList.add("hide");
+            // tagHover.style.display = "none";
+          });
+          return tagElement;
+        }
+        // Handle close button clicks
+        document.addEventListener("click", (event) => {
+          if (event.target.classList.contains("close")) {
+            const closeButton = event.target;
+            const tagElement = closeButton.parentElement; // Get the parent tag element
+            displayElement.removeChild(tagElement);
+            const selectedTags = document.querySelectorAll(".tag");
+            const selectedTagsArray = Array.from(selectedTags);
+            // const selectedTagsText = selectedTagsArray.map(tag => tag.querySelector(".tagText").textContent);
+            // console.log(selectedTagsText);
+            // convert allBlogs.tags into a array
+            const filteredBlogs = [];
+            // console.log(allBlogs[0].tags);
+            for(let i = 0; i < allBlogs.length; i++){
+              let cnt = 0;
+              for(let j = 0; j < allBlogs[i].tags.length; j++){
+                for(let k = 0; k < selectedTagsArray.length; k++){
+                  curr = allBlogs[i].tags[j];
+                  curr = curr.trim(); // trim from both the sides
+                  // trim from both the sides
+                  if(curr === selectedTagsArray[k].querySelector(".tagText").textContent.trim()){
+                    cnt++;
+                    break;
+                  }
+                }
+              }
+              if(cnt >= selectedTagsArray.length){
+                filteredBlogs.push(allBlogs[i]);
+              }
+            }
+            console.log(filteredBlogs);
+            DisplayData(filteredBlogs);
+          }
+          // filter the blogs based on the tags in the blogs array which has the tags as its 3rd parameter
+
+        });
+    </script>
+    <!-- <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Your Website. All rights reserved.</p>
+        </div>
+    </footer> -->
+  </body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.5/pagination.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.snow.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.5/pagination.min.js"></script>
+    <style>
+      .Job-Info{
+            display: flex;
+           width: 50%;
+           flex-direction: column;
+
+        }
+        .paginationjs-content{
+            width: 100%;
+        }
+        .middle{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .Job-Info .paginationjs{
+            display: flex;
+            justify-content: center;
+            margin: 10px;
+        }
+        .paginationjs-content{
+            margin-top: 30px;
+            height: 500px;
+            /* overflow: auto; */
+            /* overflow-y: scroll; */
+            /* scrollbar-width: none; */
+        }
+        h1{
+            text-align: center;
+            margin-top: 20px;
+        }
+        #editor{
+            /* height: auto; */
+            border: 0;
+        }
+        .ql-container{
+            border: none !important;
+        }
+        .job-details{
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid grey;
+            border-radius: 5px;
+        }
+        .job-details h2{
+            text-align: center;
+        }
+        .job-details p{
+            margin: 5px;
+        }
+        .job-details a{
+            text-align: center;
+            display: block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid grey;
+            border-radius: 5px;
+            text-decoration: none;
+            color: black;
+        }
+        .job-details a:hover{
+            background-color: lightgrey;
+        }
+        /* move the content up */
+        .job-title{
+            margin-top: -100px;
+        }
+        
+
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/landing">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="d-inline-block align-top"
+            alt=""
+            height="30"
+            loading="lazy"
+          />
+          <!-- Bootstrap -->
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/landing">All Questions</a>
+            </li>
+            <!-- <li class="nav-item">
+                        <a class="nav-link" href="/newblog">New Blog</a>
+                    </li> -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Blogs
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/allblogs">All Blogs</a>
+                <a class="dropdown-item" href="/userblogs">My Blogs</a>
+                <a class="dropdown-item" href="/savedblogs">Saved Blogs</a>
+                <a class="dropdown-item" href="/newblog">New Blog</a>
+              </div>
+            </li>
+            <!-- My Questions Dropdown -->
+            <!-- <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                My Questions
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/accepted">Accepted</a>
+                <a class="dropdown-item" href="/rejected">Rejected</a>
+                <a class="dropdown-item" href="/saved">Saved</a>
+                <a class="dropdown-item" href="/new">New Question</a>
+              </div>
+            </li> -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Jobs
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/all-jobs">Jobs</a>
+                <a class="dropdown-item" href="/add-job">Add Job</a>
+              </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- create a search input and search button clicking on which the blogs are filtered and displayed -->
+    <div class="Company-Name">
+      <h1 id="Company"></h1>
+    </div>
+    <div class="middle">
+        <div class="Job-Info">
+            <div id="pagination" class="paginationjs"></div>
+            <div id="dataContainer" class="paginationjs-content"></div>
+        </div>
+    </div>
+    
+    <script>
+      //fetch the data from backend on /display-jobs
+      // function fetchData() {
+      //   fetch("/job-details")
+      //     .then((response) => response.json())
+      //     .then((data) => {
+      //       jobs_data = data;
+      //       DisplayData(jobs_data);
+      //     });
+      // }
+      const data = [];
+      // fetch the data from the backend
+      const jobs_data = {{ job | safe }}; 
+      
+      console.log(jobs_data);
+      DisplayData(jobs_data);
+      const itemsPerPage = 9; // Number of items per page
+       // Your data array
+      function DisplayData(jobs_data) {
+        console.log(jobs_data);
+        company = jobs_data["0"]["company"];
+        var Company = document.getElementById("Company");
+        Company.innerHTML = company;
+        var len = jobs_data.length;
+        // // for each job title create a different page using pagination and display the job details
+        for(var i = 1; i < len; i++){
+            var job_title = jobs_data[i]['jobTitle'];
+            var type = jobs_data[i]['type'];
+            var mode = jobs_data[i]['mode'];
+            var salary = jobs_data[i]['salary'];
+            var currency1 = jobs_data[i]['currency1'];
+            var ppo1 = jobs_data[i]['ppo1'];
+            var ppo2 = jobs_data[i]['ppo2'];
+            var time = jobs_data[i]['time'];
+            var currency2 = jobs_data[i]['currency2'];
+            var description = jobs_data[i]['description'];
+            var who = jobs_data[i]['who'];
+            var requirements = jobs_data[i]['requirements'];
+            var link = jobs_data[i]['apply'];
+
+            // push the job details to the data array to display it on the page
+            // push the job details into data array as separate divs
+            data.push(`
+                <div class="job-details">
+                    <h2>${job_title}</h2>
+                </div>`
+            );
+            data.push(`
+                <div class="job-details">
+                    <p>Type: ${type}</p>
+                    <p>Mode: ${mode}<p>
+                    <p>Stipend: ${salary} ${currency1}</p>
+                    <p>PPO: ${ppo1} ${currency2} - ${ppo2} ${currency2} ${time}</p>
+                </div>`
+            );
+            // description, who, requirements are quill editor contents
+            data.push(`
+                <div class="job-details">
+                    <h3>Job Details: </h3>
+                    <div id="editor"></div>
+                </div>`
+            );
+            data.push(description);
+            data.push(`
+                <div class="job-details">
+                    <h3>Job Requirements: </h3>
+                    <div id="editor"></div>
+                </div>`
+            );
+            data.push(requirements);
+            data.push(`
+                <div class="job-details">
+                    <h3>Eligibility: </h3>
+                    <div id="editor"></div>
+                </div>`
+            );
+            data.push(who);
+            data.push(
+                `<div class="job-details">
+                    <a href="${link}" target="_blank">Apply</a>
+                </div>`
+            );
+            
+        }
+        renderTable(data);
+      }
+        // for (let i = 1; i <= 20; i++) {
+        //   data.push(`Item ${i}`);
+        // }
+        function renderTable(data){
+          $(document).ready(function () {
+          $("#pagination").pagination({
+            dataSource: data,
+            pageSize: itemsPerPage,
+            callback: function (data, pagination) {
+              const container = $("#dataContainer");
+              container.empty();
+
+              $.each(data, function (index, item) {
+                console.log(index);
+                // console.log(item.ops);
+                if(index == 3 || index == 5 || index == 7){
+                    // container.append("<div id='editor'></div>");
+                    
+                    var quill = new Quill("#editor", {
+                        theme: "snow",
+                        readOnly: true,
+                        modules: {
+                            toolbar: false,
+                        },
+                    });
+                    quill.setContents(item.ops);
+                    // remove the editor id from the div
+                    $("#editor").removeAttr("id");
+                }else{
+                    container.append(item);
+                }
+                // container.append("<div>" + item + "</div>");
+              });
+            },
+          });
+        });
+      }
+        
+        
+      // var apply = document.getElementById("apply");
+      //   apply.addEventListener("click", () => {
+      //       console.log("clicked");
+      //       // scroll the jobs-info class to the second class in its container
+      //       // when clicked the apply button, the type class should come to the top of the paginationjs container
+      //       var main = document.querySelector('.paginationjs-content');
+      //       var targetDiv = document.querySelector('.job-title');
+
+      //       main.scrollTo({
+      //           top: targetDiv.offsetTop - 270,
+      //           behavior: 'smooth'
+      //       });
+      //   });
+    </script>
+    <!-- <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Your Website. All rights reserved.</p>
+        </div>
+    </footer> -->
+  </body>
+</html>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- <link href="styles.css" rel="stylesheet" /> -->
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.snow.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <style>
+    /*center the topic div*/
+        .topic {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 10px;
+        }
+        .topic-input{
+            width: 50%;
+        }
+        /*center the editor1 div*/
+        /* #editor1 {
+            margin: 0 auto;
+        } */
+        #editor1, #toolbar-container{
+            margin: 0 auto;
+            width: 75%;   
+        }
+        #editor1{
+            height: 500px;
+            margin-bottom: 50px;
+        }
+        /*center the save-content button*/
+        /* styling for the tags division */
+        .all-tags-div{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: -40px;
+          margin-bottom: 50px;
+        }
+        .all-tags {
+          width: 460px;
+          display: flex;
+          flex-direction: column;
+          align-items: center; 
+        }
+        .tags {
+          width: 300px;
+          height: 150px;
+          border: 1px solid black;
+        }
+        .search{
+          margin: 10px;
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+        }
+        #suggestions {
+          display: none;
+          position: absolute;
+          background-color: white;
+          border: 1px solid #ccc;
+          max-height: 200px;
+          overflow-y: auto;
+          width: auto;
+          z-index: 1;
+        }
+        .suggestion {
+          padding: 8px 12px;
+          cursor: pointer;
+        }
+        .suggestion:hover {
+          background-color: #f0f0f0;
+        }
+        .selected {
+          background-color: #f0f0f0;
+        }
+        .tags{
+          overflow: auto;
+          scroll-behavior: smooth;
+        }
+        .display{
+          /* display: grid;
+          set the no. of max columns as 2
+          grid-template-columns: auto;
+          grid-template-rows: auto; */
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .tag {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin: 5px;
+          padding: 5px 10px;
+          border: 1px solid #ddd;
+          border-radius: 3px;
+          background-color: #eee;
+        }
+        .tagHover{
+          display: block;
+          position: absolute;
+          background-color: rgba(0, 0, 0, 0.8);
+          height: auto;
+          margin-bottom: 70px;
+          z-index: -1;
+          color: white;
+          padding: 5px;
+          opacity: 0;
+          max-width: 55%;
+          word-wrap: break-word;
+        }
+        .show{
+          animation: fadeIn 0.3s forwards;
+        }
+        .hide{
+          animation: fadeOut 0.3s forwards;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            z-index: -1;
+          }
+          to {
+            opacity: 1;
+            z-index: 1;
+          }
+        }
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+            z-index: 1;
+          }
+          to {
+            opacity: 0;
+            z-index: -1;
+          }
+        }
+        .tagText{
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 240px;
+        }
+        .tag .tagText {
+          margin-right: 10px;
+        }
+        .tag .close {
+          cursor: pointer;
+          display: inline-block;
+        /* Adjust margin-left to position close button correctly */
+          margin-left: auto
+        }
+        .blogAuthor{
+          text-align: center;
+          margin-bottom: 50px;
+        }
+        .blogAuthor input{
+          width: auto;
+          border: none;
+        }
+        .like-dislike{
+          width: auto;
+          position: absolute;
+          left: 20px;
+          top: 150px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .like-dislike button{
+          margin: 5px;
+        }
+        #blogLikes{
+          margin: 5px;
+        }
+        .like-dislike button{
+          background-color: white;
+          border-color: black;
+          color: black;
+        }
+        .like-dislike button:hover{
+          background-color: white;
+          border-color: black;
+          color: black;
+        }
+        .liked{
+          /* set higher priority */
+          background-color: green !important;
+          color: white;
+        }
+        .disliked{
+          background-color: red !important;
+          color: white;
+        }
+        /* comment-container */
+        .comment-container {
+        margin-bottom: 10px;
+      }
+      .reply-container {
+        margin-left: 20px; /* Indentation for replies */
+      }
+      .saved .comment-container {
+        border-left: 1px solid grey;
+        /* border-top: none;
+        border-bottom: none;
+        border-right: none; */
+        padding: 5px;
+      }
+      #editor-comment,
+      #toolbar-container-comment {
+        margin: 0 auto;
+        width: 100%;
+      }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/landing">
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          class="d-inline-block align-top"
+          alt=""
+          height="30"
+          loading="lazy"
+        />
+        <!-- Bootstrap -->
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/landing">All Questions</a>
+          </li>
+          <!-- <li class="nav-item">
+                      <a class="nav-link" href="/newblog">New Blog</a>
+                  </li> -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdownMenuLink"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Blogs
+            </a>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="navbarDropdownMenuLink"
+            >
+              <a class="dropdown-item" href="/allblogs">All Blogs</a>
+              <a class="dropdown-item" href="/userblogs">My Blogs</a>
+              <a class="dropdown-item" href="/savedblogs">Saved Blogs</a>
+              <a class="dropdown-item" href="/newblog">New Blog</a>
+            </div>
+          </li>
+          <!-- My Questions Dropdown -->
+          <!-- <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdownMenuLink"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              My Questions
+            </a>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="navbarDropdownMenuLink"
+            >
+              <a class="dropdown-item" href="/accepted">Accepted</a>
+              <a class="dropdown-item" href="/rejected">Rejected</a>
+              <a class="dropdown-item" href="/saved">Saved</a>
+              <a class="dropdown-item" href="/new">New Question</a>
+            </div>
+          </li> -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdownMenuLink"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Jobs
+            </a>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="navbarDropdownMenuLink"
+            >
+              <a class="dropdown-item" href="/all-jobs">Jobs</a>
+              <a class="dropdown-item" href="/add-job">Add Job</a>
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+      <!-- <form action="/save"> -->
+        <!-- div for like and dislike button -->
+        <div class="like-dislike" id="blogLikeDislike">
+          <!-- keep a arrow up and down and keep the value b/w them -->
+          <button type="button" id="blogLike">Like</button>
+          <span id="blogLikes">0</span>
+          <button type="button" id="blogDislike">Dislike</button>
+        </div>
+        <div class="topic">
+          <!-- a input box to take topic input -->
+          <label for="topic">Topic:</label>
+          <input type="text" id="topic" class="topic-input" readonly required/>
+        </div>
+        <!-- div for the username -->
+        <div class="blogAuthor">
+          <label for="author">Author:</label>
+          <input type="text" id="author" class="topic-input" readonly required/>
+        </div>
+        <div class="all-tags-div">
+            <div class="all-tags">
+              <h3>Tags</h3>
+              <!-- add a search bar to search through the available company tags -->
+              <div class="tags">
+                <div class="display"></div>
+              </div>
+          </div>
+        </div>
+      <div id="editor1"> </div>
+      <!-- comment-container-starts -->
+      <h1>Comments</h1>
+      <button id="add-comment-btn">Add Comment</button>
+      <div id="comments-container"></div>
+      <script>
+        const quill1 = new Quill('#editor1', {
+          modules: {
+            syntax: true,
+            toolbar: false,
+          },
+          theme: 'snow',
+          readOnly: 'true'
+        });
+        const topic2 = document.getElementById('topic');
+        const blogId = {{blogId | safe}};
+        console.log(blogId);
+        topic2.value = '{{topic | safe}}';
+        quill1.setContents({{content | safe}});
+        const allTags = {{tags | safe}};
+        // console.log(allTags);
+        const author = document.getElementById('author');
+        author.value = '{{author | safe}}';
+        function renderTags(tags) {
+            const displayElement = document.querySelector(".display");
+            displayElement.innerHTML = "";
+            // console.log(tags['tags']);
+            for(let i = 0; i < allTags.length; i++) {
+                const tag = createTag(allTags[i]);
+                displayElement.appendChild(tag);
+            }
+        }
+        function createTag(text) {
+            const tag = document.createElement("div");
+            tag.classList.add("tag");
+            const textArea = document.createElement("span");
+            textArea.textContent = text;
+            textArea.classList.add("tagText");
+            tag.appendChild(textArea);
+            const tagHover = document.createElement("div");
+            tagHover.classList.add("tagHover");
+            tagHover.textContent = text;
+            tag.appendChild(tagHover);
+            
+            textArea.addEventListener("mouseover", () => {
+                tagHover.classList.remove("hide");
+                tagHover.classList.add("show");
+            });
+            textArea.addEventListener("mouseout", () => {
+                tagHover.classList.remove("show");
+                tagHover.classList.add("hide");
+            });
+            return tag;
+        }
+        renderTags(allTags);
+        // logic for the like and dislike button
+        const blogLike = document.getElementById('blogLike');
+        const blogDislike = document.getElementById('blogDislike');
+        const blogLikes = document.getElementById('blogLikes');
+        const blogLikeDislike = document.getElementById('blogLikeDislike');
+        // when the like button is clicked
+        blogLike.addEventListener('click', () => {
+          console.log(blogId);
+          // check if the like button is already clicked
+          fetch('/likeBlog', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            content: 'application/json',
+            body: JSON.stringify({
+              blogId: blogId
+            })
+
+          })
+          if(blogLike.classList.contains('liked')){
+            // if the like button is already clicked then remove the like
+            blogLike.classList.remove('liked');
+            blogLikes.textContent = parseInt(blogLikes.textContent) - 1;
+          } else {
+            // if the like button is not clicked then add the like
+            blogLike.classList.add('liked');
+            blogLikes.textContent = parseInt(blogLikes.textContent) + 1;
+            // check if the dislike button is already clicked
+            if(blogDislike.classList.contains('disliked')){
+              // if the dislike button is already clicked then remove the dislike
+              blogDislike.classList.remove('disliked');
+              blogLikes.textContent = parseInt(blogLikes.textContent) + 1;
+            }
+          }
+        });
+        // when the dislike button is clicked
+        blogDislike.addEventListener('click', () => {
+          // check if the dislike button is already clicked
+          fetch('/dislikeBlog', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              blogId: blogId
+            })
+          })
+          if(blogDislike.classList.contains('disliked')){
+            // if the dislike button is already clicked then remove the dislike
+            
+            blogDislike.classList.remove('disliked');
+            blogLikes.textContent = parseInt(blogLikes.textContent) + 1;
+          } else {
+            // if the dislike button is not clicked then add the dislike
+            blogDislike.classList.add('disliked');
+            blogLikes.textContent = parseInt(blogLikes.textContent) - 1;
+            // check if the like button is already clicked
+            if(blogLike.classList.contains('liked')){
+              // if the like button is already clicked then remove the like
+
+              blogLike.classList.remove('liked');
+              blogLikes.textContent = parseInt(blogLikes.textContent) - 1;
+            }
+          }
+        });
+        // set the like and dislike button based on the user's previous action
+        const totalBlogLikesDislikes = '{{totalBlogLikesDislikes | safe}}';
+        const userLikedBlog =  '{{existing_like | safe}}';
+        const userDislikedBlog = '{{existing_dislike | safe}}';
+        if(userLikedBlog === 'True'){
+          blogLike.classList.add('liked');
+        }
+        if(userDislikedBlog === 'True'){
+          blogDislike.classList.add('disliked');
+        }
+        blogLikes.textContent = totalBlogLikesDislikes;
+
+        // logic for comment section
+        var toolbarOptions = [
+        [{ header: [1, 2, false] }],
+        ["bold", "italic", "underline"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image", "video"],
+        ["clean"],
+        ["code-block"],
+      ];
+        var addCommentButton = document.getElementById("add-comment-btn");
+        var commentsContainer = document.getElementById("comments-container");
+        var quill;
+        addCommentButton.addEventListener("click", function () {
+          var unsavedComments = document.querySelectorAll(".unsaved");
+          for (var i = 0; i < unsavedComments.length; i++) {
+            unsavedComments[i].parentElement.removeChild(unsavedComments[i]);
+          }
+          var newComment = createCommentSection(blogId);
+          commentsContainer.insertBefore(newComment, commentsContainer.firstChild);
+          quill = new Quill("#editor-comment", {
+            theme: "snow",
+            modules: {
+              syntax: true,
+              toolbar: toolbarOptions,
+              // autocomplete: true,
+            },
+          });
+        });
+        // Function to create a new comment section
+        const userName = '{{userName | safe}}';
+        function createCommentSection(commentId) {
+          var commentDiv = document.createElement("div");
+          commentDiv.classList.add("comment-container");
+          commentDiv.setAttribute("for", commentId);
+          var commentInput = document.createElement("div");
+          commentInput.setAttribute("id", "editor-comment");
+          commentDiv.classList.add("unsaved");
+          var saveButton = document.createElement("button");
+          saveButton.textContent = "Save";
+
+          var cancelButton = document.createElement("button");
+          cancelButton.textContent = "Cancel";
+
+          var replyId;
+          saveButton.addEventListener("click", function () {
+            // call fetch using get method for the commentId from /comments/get_comment_id
+            fetch("/comments/get_comment_id")
+              .then((response) => response.json())
+              .then((data) => {
+                replyId = data.comment_id;
+              }).then(() => {
+              console.log(replyId);
+              var commentText = quill.getContents();
+              console.log(commentText);
+              commentTextSend = JSON.stringify(commentText);
+              if (commentText !== "") {
+                // Save the comment to the backend
+                fetch("/comments/" + commentId + "/" + replyId, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    'name': userName, // Get the actual name from somewhere
+                    'text': commentTextSend,
+                  })
+                });
+                // remove the unsaved class and add the saved class
+                commentDiv.innerHTML = ""; // Clear the div
+                var commentTextElement = document.createElement("div");
+                commentTextElement.setAttribute("id", "editorTemp");
+                commentDiv.appendChild(commentTextElement);
+                var quillTemp = new Quill("#editorTemp", {
+                  theme: "snow",
+                  readOnly: true,
+                  modules: {
+                    syntax: true,
+                    toolbar: false,
+                  },
+                });
+                quillTemp.setContents(commentText);
+                commentDiv.classList.remove("unsaved");
+                commentDiv.classList.add("saved");
+                commentTextElement.removeAttribute("id");
+                commentDiv.appendChild(document.createElement("br"));
+                commentDiv.classList.add("saved");
+                commentDiv.id = replyId;
+                commentDiv.setAttribute("for", commentId);
+                var replyButton = document.createElement("button");
+                var toggleRepliesButton = document.createElement("button");
+                replyButton.textContent = "Reply";
+                replyButton.addEventListener("click", function () {
+                  var unsavedComments = document.querySelectorAll(".unsaved");
+                  for (var i = 0; i < unsavedComments.length; i++) {
+                    unsavedComments[i].parentElement.removeChild(
+                      unsavedComments[i]
+                    );
+                  }
+                  toggleRepliesButton.textContent = "ShowReplies";
+                  toggleReplies(replyId, toggleRepliesButton);
+                  var replyDiv = createCommentSection(replyId);
+                  replyDiv.classList.add("reply-container");
+                  commentDiv.appendChild(replyDiv);
+                  quill = new Quill("#editor-comment", {
+                    theme: "snow",
+                    modules: {
+                      syntax: true,
+                      toolbar: toolbarOptions,
+                    },
+                  });
+                });
+                commentDiv.appendChild(replyButton);
+                var toggleRepliesButton = document.createElement("button");
+                toggleRepliesButton.textContent = "ShowReplies";
+                toggleRepliesButton.addEventListener("click", function () {
+                  toggleReplies(replyId, toggleRepliesButton);
+                });
+                commentDiv.appendChild(toggleRepliesButton);
+                cancelButton.removeEventListener("click", cancelComment);
+              }
+            });
+          });
+
+          cancelButton.addEventListener("click", cancelComment);
+
+          function cancelComment() {
+            commentDiv.parentElement.removeChild(commentDiv);
+          }
+          commentDiv.appendChild(commentInput);
+          commentDiv.appendChild(saveButton);
+          commentDiv.appendChild(cancelButton);
+          return commentDiv;
+
+        }
+        // Function to display or hide replies for a comment
+        function toggleReplies(commentId, toggleRepliesButton) {
+          var commentContainer = document.getElementById(commentId);
+          console.log(commentId);
+          // var replyContainer = commentContainer.querySelectorAll('.reply-container');
+          // get all the replyContainer by for attribute
+          var replyContainer = document.querySelectorAll(
+            '[for="' + commentId + '"]'
+          );
+          // console.log(replyContainer);
+          if (toggleRepliesButton.textContent === "HideReplies") {
+            // remove the elements of the replyContainer permanently
+            for (var i = 0; i < replyContainer.length; i++) {
+              if (replyContainer[i].id != commentId) {
+                commentContainer.removeChild(replyContainer[i]);
+              }
+            }
+            toggleRepliesButton.textContent = "ShowReplies";
+          } else {
+            fetch("/comments/replies/" + commentId)
+              .then((response) => response.json())
+              .then((data) => {
+                console.log("1" + data);
+                for (var i = 0; i < replyContainer.length; i++) {
+                  if (replyContainer[i].id != commentId) {
+                    commentContainer.removeChild(replyContainer[i]);
+                  }
+                }
+
+                for (var reply_id in data) {
+                  console.log("reply" + reply_id);
+                  var replyDiv = createCommentElement(
+                    reply_id,
+                    data[reply_id]["text"]
+                  );
+                  replyDiv.classList.add("reply-container");
+                  replyDiv.setAttribute("for", commentId);
+                  commentContainer.appendChild(replyDiv);
+                  var quillTemp = new Quill("#editorTemp", {
+                    theme: "snow",
+                    readOnly: true,
+                    modules: {
+                      syntax: true,
+                      toolbar: false,
+                    },
+                  });
+                  content = JSON.parse(data[reply_id]["text"]);
+                  quillTemp.setContents(content);
+                  var element = document.getElementById("editorTemp");
+                  element.removeAttribute("id");
+                }
+              });
+            toggleRepliesButton.textContent = "HideReplies";
+          }
+        }  
+        // Function to create a new comment element
+        function createCommentElement(replyId, text) {
+          console.log(text);
+          var commentDiv = document.createElement("div");
+          commentDiv.classList.add("comment-container");
+          var commentTextElement = document.createElement("div");
+          commentTextElement.setAttribute("id", "editorTemp");
+          commentDiv.appendChild(commentTextElement);
+          commentDiv.appendChild(document.createElement("br")); // Line break for spacing
+          commentDiv.id = replyId;
+          commentDiv.classList.add("saved");
+          var replyButton = document.createElement("button");
+          var toggleRepliesButton = document.createElement("button");
+          replyButton.textContent = "Reply";
+          replyButton.addEventListener("click", function () {
+            var unsavedComments = document.querySelectorAll(".unsaved");
+            for (var i = 0; i < unsavedComments.length; i++) {
+              unsavedComments[i].parentElement.removeChild(unsavedComments[i]);
+            }
+            toggleRepliesButton.textContent = "ShowReplies";
+            toggleReplies(replyId, toggleRepliesButton);
+            var replyDiv = createCommentSection(replyId);
+            replyDiv.classList.add("reply-container");
+            commentDiv.appendChild(replyDiv);
+            quill = new Quill("#editor-comment", {
+              theme: "snow",
+              modules: {
+                syntax: true,
+                toolbar: toolbarOptions,
+              },
+            });
+          });
+          commentDiv.appendChild(replyButton);
+          toggleRepliesButton.textContent = "ShowReplies";
+          toggleRepliesButton.addEventListener("click", function () {
+            toggleReplies(replyId, toggleRepliesButton);
+          });
+          commentDiv.appendChild(toggleRepliesButton);
+          return commentDiv;
+        }
+        //initial fetch of comments based on blogId
+        fetch("/comments/replies/" + blogId)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            for (var comment_id in data) {
+              var commentDiv = createCommentElement(
+                comment_id,
+                data[comment_id]["text"]
+              );
+              commentsContainer.appendChild(commentDiv);
+              var quillTemp = new Quill("#editorTemp", {
+                theme: "snow",
+                readOnly: true,
+                modules: {
+                  syntax: true,
+                  toolbar: false,
+                },
+              });
+              content = JSON.parse(data[comment_id]["text"]);
+              quillTemp.setContents(content);
+              var element = document.getElementById("editorTemp");
+              element.removeAttribute("id");
+            }
+          });
+      </script>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Your Website. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

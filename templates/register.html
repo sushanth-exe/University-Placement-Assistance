@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login or Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff; /* White background */
+            margin: 0;
+            padding: 0;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #c62828; /* Red text color */
+            margin-top: 50px;
+        }
+        
+        #register_form {
+            width: 300px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #register_form h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #c62828; /* Red text color */
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #c62828; /* Red button color */
+            color: #fff; /* White text color */
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #ab000d; /* Darker red on hover */
+        }
+        .error {
+            color: #c62828; /* Red error message color */
+            margin-top: 5px;
+        }
+        
+        p {
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        a {
+            color: #c62828; /* Red link color */
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Placeholder for college logo */
+        .college-logo {
+            width: 15%; /* Adjust size as needed */
+            height: auto; /* Maintain aspect ratio */
+            display: block;
+            margin: 5% auto 20px; /* Center logo and provide space */
+        }
+    </style>
+</head>
+<body>
+    <img class="college-logo" src="https://www.mahindrauniversity.edu.in/wp-content/uploads/2023/06/Mahindra-University-Logo.svg" alt="College Logo">
+    <div id="register_form">
+        <h3>Register</h3>
+        <form action="/register" method="post">
+            <label for="reg_username">Username:</label>
+            <input type="text" id="reg_username" name="username" required><br><br>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" required><br><br>
+            <label for="reg_password">Password:</label>
+            <input type="password" id="reg_password" name="password" required><br><br>
+            <button type="submit">Register</button>
+        </form>
+        {% if reg_error %}
+            <div style="color: red;">{{ reg_error }}</div>
+        {% endif %}
+        <p>Already have an account? <a href="/login">Login</a></p>
+    </div>
+</body>
+</html>

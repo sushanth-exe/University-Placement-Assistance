@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Posting</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link href="styles.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.snow.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.5/dist/quill.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <style>
+      /*center the topic div*/
+      .topic {
+        text-align: center;
+        margin-top: 50px;
+        margin-bottom: 50px;
+      }
+      .topic-input {
+        width: 50%;
+      }
+      /*center the editor1 div*/
+      /* #editor1 {
+            margin: 0 auto;
+        } */
+      #editor1,
+      #toolbar-container {
+        margin: 0 auto;
+        width: 100%;
+      }
+      #editor1, #editor2, #editor3{
+        height: 200px;
+        overflow: auto;
+      }
+      /*center the save-content button*/
+      .save1 {
+        margin-top: 50px;
+        text-align: center;
+        margin-bottom: 50px;
+      }
+      .salary{
+        display: grid;
+        grid-template-columns: 1fr 0.3fr;
+        gap: 10px;
+      }
+      .two-col{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .three-col{
+        display: grid;
+        grid-template-columns: 1fr 0.01fr 1fr 0.3fr 0.3fr;
+        gap: 10px;
+        
+      }
+      .mid{
+        margin-top: 5px;
+        align-items: center;
+      }
+      .buttons{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/landing">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="d-inline-block align-top"
+            alt=""
+            height="30"
+            loading="lazy"
+          />
+          <!-- Bootstrap -->
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/landing">All Questions</a>
+            </li>
+            <!-- <li class="nav-item">
+                        <a class="nav-link" href="/newblog">New Blog</a>
+                    </li> -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Blogs
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/allblogs">All Blogs</a>
+                <a class="dropdown-item" href="/userblogs">My Blogs</a>
+                <a class="dropdown-item" href="/savedblogs">Saved Blogs</a>
+                <a class="dropdown-item" href="/newblog">New Blog</a>
+              </div>
+            </li>
+            <!-- My Questions Dropdown -->
+            <!-- <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                My Questions
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/accepted">Accepted</a>
+                <a class="dropdown-item" href="/rejected">Rejected</a>
+                <a class="dropdown-item" href="/saved">Saved</a>
+                <a class="dropdown-item" href="/new">New Question</a>
+              </div>
+            </li> -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Jobs
+              </a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownMenuLink"
+              >
+                <a class="dropdown-item" href="/all-jobs">Jobs</a>
+                <a class="dropdown-item" href="/add-job">Add Job</a>
+              </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- create a form to take the job details such as Company Name, Job Title, Type(Internship/Full-time) 
+      Mode(Online/Offline) Salary/Stipend Description-->
+    <div class="container">
+      <div class="topic">
+        <h1>Add Job</h1>
+      </div>
+      <form action="/add-job" method="POST">
+        <div class="form-group">
+          <label for="company">Company Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="company"
+            name="company"
+            placeholder="Enter Company Name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="job-title">Job Title</label>
+          <input
+            type="text"
+            class="form-control"
+            id="job-title"
+            name="job-title"
+            placeholder="Enter Job Title"
+          />
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select class="form-control" id="type" name="type">
+              <option value="Internship">Internship</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="mode">Mode</label>
+            <select class="form-control" id="mode" name="mode">
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+            </select>
+          </div>
+        </div>
+        <!-- add style to this specific div -->
+        <div class="form-group" >
+          <label for="salary">Salary/Stipend</label>
+          <div class="salary">
+            <input
+              type="text"
+              class="form-control"
+              id="salary"
+              name="salary"
+              placeholder="Enter Salary/Stipend"
+            />
+            <!-- add a label for currencies -->
+            <select class="form-control" id="currency-1" name="currency">
+              <option value="INR">INR</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" >
+          <label for="ppo">PPO Range</label>
+          <div class="three-col">
+            <input
+              type="text"
+              class="form-control"
+              id="ppo-1"
+              name="ppo-1"
+              placeholder="Enter Salary/Stipend"
+            />
+            <p class="mid">to</p>
+            <input
+              type="text"
+              class="form-control"
+              id="ppo-2"
+              name="ppo-2"
+              placeholder="Enter Salary/Stipend"
+            />
+            <!-- add a label for currencies -->
+            <select class="form-control" id="time" name="currency">
+              <option value="PA">Per Annum</option>
+              <option value="Horly">Hourly</option>
+              <option value="Monthly">Monthly</option>
+              <option value="Weekly">Weekly</option>
+            </select>
+            <select class="form-control" id="currency-2" name="currency">
+              <option value="INR">INR</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+            
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description">Job Details</label>
+          <div id="editor1"></div>
+        </div>
+        <!-- add quill box for Job Requriements -->
+        <div class="form-group">
+          <label for="requirements">Job Requirements</label>
+          <div id="editor2"></div>
+        </div>
+        <!-- Who can apply? quill box -->
+        <div class="form-group">
+          <label for="who">Who can apply?</label>
+          <div id="editor3"></div>
+        </div>
+        <!-- option to apply using link take link as input -->
+        <div class="form-group">
+          <label for="apply">Apply</label>
+          <input
+            type="text"
+            class="form-control"
+            id="apply"
+            name="apply"
+            placeholder="Enter Link to Apply"
+          />
+        </div>
+        <!-- option to upload document -->
+        <div class="form-group">
+          <label for="document">Other Details</label>
+          <input type="file" class="form-control-file" id="document" />
+        </div>
+        <!-- add an option to another role with the same details as above -->
+        <div class="form-group">
+          <!-- button to add another role -->
+          <button type="button" class="btn btn-primary" onclick="addAnotherRole()">Add Another Role</button>
+        </div>
+      </form>
+      <div class="save1">
+        <button type="submit" class="btn btn-primary" onclick="sendContent()">Save Content</button>
+      </div>
+    </div>
+    <script>
+      var toolbarOptions = [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link", "image", "video"],
+            ["clean"],
+      ];
+      var quillBoxes = []
+      var editorCount = 3;
+      var roles = 1;
+      // var editor = document.querySelectorAll("#editor1")
+      // console.log(editor)
+      var quill1 = new Quill("#editor1", {
+        theme: "snow",
+        modules: {
+          toolbar: toolbarOptions,
+        },
+      });
+      var quill2 = new Quill("#editor2", {
+        theme: "snow",
+        modules: {
+          toolbar: toolbarOptions,
+        },
+      });
+      var quill3 = new Quill("#editor3", {
+        theme: "snow",
+        modules: {
+          toolbar: toolbarOptions,
+        },
+      });
+      
+      quillBoxes.push(quill1, quill2, quill3);
+      // on clicking add another role the all the options except for company name should be added again
+      // function to add another role in the same form don't create a new form
+      function addAnotherRole() {
+        // create a new div with all the options except for company name
+        // append this div to the form
+        var newDiv = document.createElement("div");
+        var editorCount1 = ++editorCount;
+        var editorCount2 = ++editorCount;
+        var editorCount3 = ++editorCount;
+        // add style to this div
+        newDiv.style.marginTop = "50px";
+        newDiv.style.marginBottom = "50px";
+        newDiv.className = "roles-" + ++roles;
+        newDiv.innerHTML = `
+        <div class="form-group">
+          <label for="job-title">Job Title</label>
+          <input
+            type="text"
+            class="form-control"
+            id="job-title"
+            name="job-title"
+            placeholder="Enter Job Title"
+          />
+        </div>
+        <div class="two-col">
+          <div class="form-group
+          ">
+            <label for="type">Type</label>
+            <select class="form-control" id="type" name="type">
+              <option value="Internship">Internship</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="mode">Mode</label>
+            <select class="form-control" id="mode" name="mode">
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="salary">Salary/Stipend</label>
+          <div class="salary">
+            <input
+              type="text"
+              class="form-control"
+              id="salary"
+              name="salary"
+              placeholder="Enter Salary/Stipend"
+            />
+            <!-- add a label for currencies -->
+            <select class="form-control" id="currency-1" name="currency">
+              <option value="INR">INR</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>` +
+          `<div class="form-group">
+          <label for="ppo">PPO Range</label>
+          <div class="three-col">
+            <input
+              type="text"
+              class="form-control"
+              id="ppo-1"
+              name="ppo-1"
+              placeholder="Enter Salary/Stipend"
+            />
+            <p class="mid">to</p>
+            <input
+              type="text"
+              class="form-control"
+              id="ppo-2"
+              name="ppo-2"
+              placeholder="Enter Salary/Stipend"
+            />
+            <!-- add a label for currencies -->
+            <select class="form-control" id="time" name="currency">
+              <option value="PA">Per Annum</option>
+              <option value="Horly">Hourly</option>
+              <option value="Monthly">Monthly</option>
+              <option value="Weekly">Weekly</option>
+            </select>
+            <select class="form-control" id="currency-2" name="currency">
+              <option value="INR">INR</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+
+        </div>
+        <div class="form-group">
+          <label for="description">Job Details</label>
+          <div id="`+ `editor` + editorCount1 + `" style="height: 200px; overflow: auto"></div>
+        </div>
+        <!-- add quill box for Job Requriements -->
+        <div class="form-group">
+          <label for="requirements">Job Requirements</label>
+          <div id="`+ `editor` + editorCount2 + `" style="height: 200px; overflow: auto"></div>
+        </div>
+        <!-- Who can apply? quill box -->
+        <div class="form-group">
+          <label for="who">Who can apply?</label>
+          <div id="`+ `editor` + editorCount3 + `" style="height: 200px; overflow: auto"></div>
+        </div>
+
+        <!-- option to apply using link take link as input -->
+        <div class="form-group">
+          <label for="apply">Apply</label>
+          <input
+            type="text"
+            class="form-control"
+            id="apply"
+            name="apply"
+            placeholder="Enter Link to Apply"
+          />
+        <!-- option to upload document -->
+        
+        <div class="form-group">
+          <label for="document">Other Details</label>
+          <input type="file" class="form-control-file" id="document" />
+        </div>
+        `+ `<div class='buttons'><button type="button" class="btn btn-primary" onclick="addAnotherRole()">Add Another Role</button>`
+         + `<button type="button" class="btn btn-primary" onclick="removeRole(`+ roles +`, `+ editorCount1 + `)">Remove Role</button></div>`;
+        // add options to add one more role and remove this role
+
+        document.querySelector("form").appendChild(newDiv);
+        // create a new quill box for the new div
+        var quillTemp = new Quill("#editor" + editorCount1, {
+          theme: "snow",
+          modules: {
+            toolbar: toolbarOptions,
+          },
+        });
+        quillBoxes.push(quillTemp);
+        quillTemp = new Quill("#editor" + editorCount2, {
+          theme: "snow",
+          modules: {
+            toolbar: toolbarOptions,
+          },
+        });
+        quillBoxes.push(quillTemp);
+        quillTemp = new Quill("#editor" + editorCount3, {
+          theme: "snow",
+          modules: {
+            toolbar: toolbarOptions,
+          },
+        });
+        quillBoxes.push(quillTemp);
+        var roleCurrent = document.querySelector(".roles-" + roles);
+        roleCurrent.scrollIntoView({ behavior: "smooth" });
+      }
+      function removeRole(role, editorCount1) {
+        //remove from the quillBoxes array
+        quillBoxes.splice(editorCount1 - 1, 1);
+        quillBoxes.splice(editorCount1 - 1, 1);
+        quillBoxes.splice(editorCount1 - 1, 1);
+        console.log(quillBoxes);
+        document.querySelector(".roles-" + role).remove();
+      }
+      function sendContent() {
+        // create a json object with all the content for all the roles for the inputs
+        var content = [];
+        //company name
+        var company = document.querySelector("#company").value;
+        content.push({ company: company });
+        // get by for attribute of job-title
+        var jobTitles = document.querySelectorAll("input[id='job-title']");
+        // console.log(jobTitles);
+        var types = document.querySelectorAll("select[id='type']");
+        var modes = document.querySelectorAll("select[id='mode']");
+        var salaries = document.querySelectorAll("input[id='salary']");
+        var currencies = document.querySelectorAll("select[id='currency-1']");
+        var ppo1 = document.querySelectorAll("input[id='ppo-1']");
+        var ppo2 = document.querySelectorAll("input[id='ppo-2']");
+        var times = document.querySelectorAll("select[id='time']");
+        var currency2 = document.querySelectorAll("select[id='currency-2']");
+        var descriptions = [];
+        var requirements = [];
+        var who = [];
+        for (var i = 0; i < quillBoxes.length; i++) {
+          if (i % 3 == 0) {
+            descriptions.push(quillBoxes[i].getContents());
+          } else if (i % 3 == 1) {
+            requirements.push(quillBoxes[i].getContents());
+          } else {
+            who.push(quillBoxes[i].getContents());
+          }
+        }
+        // get all the apply links
+        var allApply = document.querySelectorAll("input[id='apply']");
+        // console.log(descriptions);
+        // console.log(requirements);
+        // console.log(who);
+        for (var i = 0; i < jobTitles.length; i++) {
+          content.push({
+            jobTitle: jobTitles[i].value,
+            type: types[i].value,
+            mode: modes[i].value,
+            salary: salaries[i].value,
+            currency1: currencies[i].value,
+            ppo1: ppo1[i].value,
+            ppo2: ppo2[i].value,
+            time: times[i].value,
+            currency2: currency2[i].value,
+            description: descriptions[i],
+            requirements: requirements[i],
+            who: who[i],
+            apply: allApply[i].value,
+          });
+        }
+        console.log(content);
+        //sent to the server
+        fetch("/save-job", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(content),
+        }).then((response) => {
+          if (response.status == 200) {
+            window.location.href = "/all-jobs";
+          }
+        });
+        // window.location.href = "/all-jobs";
+      }
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
